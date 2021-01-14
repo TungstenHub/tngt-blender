@@ -2,7 +2,7 @@ import bpy
 from math import pi
 
 from utils.nodes.color import hue_ramp
-from utils.nodes.material import emission, as_volume, location
+from utils.nodes.material import emission, as_volume, location, node_material
 from utils.nodes.script import osl_script
 from utils.nodes.time import time
 from utils.nodes.math import polar, multiply_by, fract
@@ -18,9 +18,7 @@ cube = bpy.data.objects['Cube']
 cube.scale = (5,5,5)
 
 # add material for cube
-bpy.ops.material.new()
-orbital_mat = bpy.data.materials['Material']
-orbital_mat.use_nodes = True
+orbital_mat = node_material()
 
 location = location()
 time = time(200, 0.05)
