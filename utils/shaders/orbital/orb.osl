@@ -1,0 +1,38 @@
+shader Orb(
+    int n = 1,
+    int l = 0,
+    int m = 0,
+    vector Position = vector(0, 0, 0),
+    float Time = 0.0,
+    output float re = 0.0,
+    output float im = 0.0)
+{
+    float x = Position[0] * 8;
+    float y = Position[1] * 8;
+    float z = Position[2] * 8;
+    float r = sqrt(x*x + y*y + z*z);
+    float t = acos(z / r);
+
+    float R = 0;
+    float Y = 0;
+
+    if ( n==1 && l==0 ){ R = 2*exp(-r); }
+    if ( n==2 && l==0 ){ R = 1/sqrt(2) * (1-r/2) * exp(-r/2); }
+    if ( n==2 && l==1 ){ R = 1/sqrt(24) * r * exp(-r/2); }
+    if ( n==3 && l==0 ){ R = 2/sqrt(27) * (1-2*r/3+2*r*r/27) * exp(-r/3); }
+    if ( n==3 && l==1 ){ R = sqrt(32.0/243) * r * (1-r/6) * exp(-r/3); }
+    if ( n==3 && l==2 ){ R = sqrt(8.0/3645) * r * r * exp(-r/3); }
+
+    if ( l==0 && m==0 ){ Y = 1; }
+    if ( l==1 && m==0 ){ Y = sqrt(3) * cos(t); }
+    if ( l==1 && m==1 ){ Y = -sqrt(3.0/2) * sin(t); }
+    if ( l==2 && m==0 ){ Y = sqrt(5.0/4) * (3*cos(t)*cos(t) - 1); }
+    if ( l==2 && m==1 ){ Y = -sqrt(15.0/2) * sin(t) * cos(t); }
+    if ( l==2 && m==2 ){ Y = sqrt(15.0/8) * sin(t) * sin(t); }
+
+    float E = -1/(2.0*n*n);
+    float a = m * atan2(y, x) - E * Time * 6.28;
+
+    re = R * Y * cos(a);
+    im = R * Y * sin(a);
+}

@@ -3,7 +3,7 @@ import os
 import importlib
 sys.path.append(os.path.abspath(''))
 
-script = 'orb11'
+script = 'orb'
 
 def main():
     importlib.import_module('scripts.' + script)
