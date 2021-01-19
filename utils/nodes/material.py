@@ -7,6 +7,11 @@ def emission(color, strength):
     mat.node_tree.links.new(strength, em.inputs["Strength"])
     return em.outputs["Emission"]
 
+def as_surface(shading):
+    mat = bpy.context.active_object.active_material
+    material_output = mat.node_tree.nodes['Material Output']
+    mat.node_tree.links.new(shading, material_output.inputs["Surface"])
+
 def as_volume(shading):
     mat = bpy.context.active_object.active_material
     material_output = mat.node_tree.nodes['Material Output']

@@ -1,0 +1,33 @@
+struct Complex {
+  float real;
+  float imag;
+};
+
+Complex sum(Complex a, Complex b) {
+    return Complex(a.real + b.real, a.imag + b.imag);
+}
+
+Complex mul(Complex a, Complex b) {
+    return Complex(a.real*b.real - a.imag*b.imag, a.real*b.imag + a.imag*b.real);
+}
+
+float abs(Complex a) {
+    return a.real*a.real + a.imag*a.imag;
+}
+
+shader Orb(
+    vector Position = vector(0, 0, 0),
+    output color c = color(0))
+{
+
+    float x = Position[0];
+    float y = Position[1];
+    Complex z = Complex(x,y);
+    Complex s = Complex(-0.4,0.6);
+
+    c = color(0);
+    for (int i = 0; i < 16; i++) {
+        z = sum(mul(z,z),s);
+        if ( abs(z) > 16 ) { c = color(1); break; }
+    }
+}
