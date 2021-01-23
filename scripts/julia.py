@@ -4,7 +4,7 @@ from math import pi
 from utils.nodes.material import node_material, location, emission, as_surface
 from utils.nodes.script import osl_script, inn_script
 from utils.nodes.color import icefire
-from utils.nodes.math import value, fract, multiply_by
+from utils.nodes.math import value, fract, multiply_by, summ_by
 from utils.nodes.anim import anim
 from utils.render import render
 
@@ -20,6 +20,29 @@ objs.remove(objs["Light"], do_unlink=True)
 bpy.ops.mesh.primitive_plane_add()
 plane = bpy.data.objects['Plane']
 plane.scale = (4, 4, 1)
+
+shader = 'basic'
+params_dict = {
+    'basic': {
+        'bailout': 2**2,
+        'max_iter': 2**6,
+        'color_factor': 0.1,
+        'color_offset': 0.1
+    },
+    'norm': {
+        'bailout': 2**8,
+        'max_iter': 2**6,
+        'color_factor': 0.1,
+        'color_offset': -0.09
+    },
+    'smooth': {
+        'bailout': 2**8,
+        'max_iter': 2**6,
+        'color_factor': -0.1,
+        'color_offset': 0.4
+    }
+}
+params = params_dict[shader]
 
 # # add material for cube
 julia_mat = node_material()
@@ -41,12 +64,12 @@ shader Cardioid(
 
 seed_x, seed_y = inn_script(s1, alpha)
 
-bailout = value(4)
-max_iter = value(128)
+bailout = value(params['bailout'])
+max_iter = value(params['max_iter'])
 
-inside, n_iter = osl_script('fractal/julia_basic', location, seed_x, seed_y, bailout, max_iter)
+inside, out = osl_script('fractal/julia_' + shader, location, seed_x, seed_y, bailout, max_iter)
 
-fac = fract(multiply_by(n_iter,0.1))
+fac = fract(summ_by(multiply_by(out,params['color_factor']),params['color_offset']))
 
 out_color = icefire(fac)
 
@@ -84,5 +107,5 @@ camera.rotation_euler = (0,0,0)
 bpy.context.scene.camera = camera
 bpy.context.scene.frame_end = 100
 
-render('julia_basic', 0.6, True)
+render('julia_' + shader, 0.6, True)
         
