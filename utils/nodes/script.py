@@ -20,7 +20,6 @@ def inn_script(s, *args):
     formula.write(s)
     sc.script = formula
     sc.update()
-    print(list(sc.inputs))
     for i in range(len(args)):
         mat.node_tree.links.new(args[i], sc.inputs[i])
     return tuple(sc.outputs)

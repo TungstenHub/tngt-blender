@@ -1,0 +1,43 @@
+struct Complex {
+   float real;
+   float imag;
+};
+
+Complex sum(Complex a, Complex b) {
+    return Complex(a.real + b.real, a.imag + b.imag);
+}
+
+Complex mul(Complex a, Complex b) {
+    return Complex(a.real*b.real - a.imag*b.imag, a.real*b.imag + a.imag*b.real);
+}
+
+float abs(Complex a) {
+    return a.real*a.real + a.imag*a.imag;
+}
+
+shader JuliaBasic(
+    vector Position = vector(0, 0, 0),
+    float seed_x = 0,
+    float seed_y = 0,
+    float bailout = 4,
+    int max_iter = 64,
+    output float inside = 1,
+    output float iter = 0)
+{
+
+    float x = Position[0];
+    float y = Position[1];
+    Complex z = Complex(x,y);
+    Complex c = Complex(seed_x, seed_y);
+
+    inside = 1;
+    iter = 0;
+
+    while (inside && iter < max_iter) {
+        if ( abs(z) > bailout ) { inside = 0; }
+        else {
+            z = sum(mul(z,z),c);
+            iter ++;
+        }
+    }
+}
