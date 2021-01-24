@@ -44,7 +44,7 @@ params_dict = {
 }
 params = params_dict[shader]
 
-# # add material for cube
+# add material for cube
 julia_mat = node_material()
 
 location = location()
