@@ -3,7 +3,7 @@ from math import pi
 
 from utils.nodes.material import node_material, location, emission, as_surface
 from utils.nodes.script import osl_script, inn_script
-from utils.nodes.color import icefire
+from utils.nodes.color import ramp_by_name
 from utils.nodes.math import value, fract, multiply_by, summ_by
 from utils.nodes.anim import anim
 from utils.render import render
@@ -21,25 +21,35 @@ bpy.ops.mesh.primitive_plane_add()
 plane = bpy.data.objects['Plane']
 plane.scale = (4, 4, 1)
 
-shader = 'basic'
+shader = 'lighting'
 params_dict = {
     'basic': {
         'bailout': 2**2,
         'max_iter': 2**6,
         'color_factor': 0.1,
-        'color_offset': 0.1
+        'color_offset': 0.1,
+        'ramp': 'icefire'
     },
     'norm': {
         'bailout': 2**8,
         'max_iter': 2**6,
         'color_factor': 0.1,
-        'color_offset': -0.09
+        'color_offset': -0.09,
+        'ramp': 'icefire'
     },
     'smooth': {
         'bailout': 2**8,
         'max_iter': 2**6,
         'color_factor': -0.08,
-        'color_offset': 0.2
+        'color_offset': 0.2,
+        'ramp': 'icefire'
+    },
+    'lighting': {
+        'bailout': 2**6,
+        'max_iter': 2**6,
+        'color_factor': 1,
+        'color_offset': 0,
+        'ramp': 'bw'
     }
 }
 params = params_dict[shader]
@@ -71,7 +81,7 @@ inside, out = osl_script('fractal/julia_' + shader, location, seed_x, seed_y, ba
 
 fac = fract(summ_by(multiply_by(out,params['color_factor']),params['color_offset']))
 
-out_color = icefire(fac)
+out_color = ramp_by_name(fac, params['ramp'])
 
 s2 = '''
 shader Color(
