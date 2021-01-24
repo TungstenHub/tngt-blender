@@ -21,7 +21,8 @@ bpy.ops.mesh.primitive_plane_add()
 plane = bpy.data.objects['Plane']
 plane.scale = (4, 4, 1)
 
-shader = 'lighting'
+shader = 'smooth'
+withLight = True
 params_dict = {
     'basic': {
         'bailout': 2**2,
@@ -83,6 +84,21 @@ fac = fract(summ_by(multiply_by(out,params['color_factor']),params['color_offset
 
 out_color = ramp_by_name(fac, params['ramp'])
 
+if withLight:
+    l_params = params_dict['lighting']
+    inside2, out2 = osl_script('fractal/julia_' + 'lighting', location, seed_x, seed_y, bailout, max_iter)
+
+    fac2 = fract(multiply_by(out2,1.2))
+
+    out_color2 = ramp_by_name(fac2, l_params['ramp'])
+
+    mix = julia_mat.node_tree.nodes.new('ShaderNodeMixRGB')
+    mix.blend_type = 'MULTIPLY'
+    mix.inputs[0].default_value = 1
+    julia_mat.node_tree.links.new(out_color, mix.inputs[1])
+    julia_mat.node_tree.links.new(out_color2, mix.inputs[2])
+    out_color = mix.outputs["Color"]
+
 s2 = '''
 shader Color(
     float inside = 0,
@@ -110,12 +126,12 @@ anim(alpha, 2*pi, 100)
 
 # camera
 camera = bpy.data.objects['Camera']
-camera.location = (0,0,10.1)
+camera.location = (0,0,8)
 camera.rotation_euler = (0,0,0)
 
 # render image
 bpy.context.scene.camera = camera
 bpy.context.scene.frame_end = 100
 
-render('julia_' + shader, 0.6, True)
+render('julia_' + shader + ('_l' if withLight else ''), 0.6, False)
         
