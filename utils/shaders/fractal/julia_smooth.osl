@@ -29,7 +29,7 @@ shader JuliaSmooth(
     float y = Position[1];
     Complex z = Complex(x,y);
     Complex c = Complex(seed_x, seed_y);
-    Complex dz = Complex(0.2,0);
+    Complex dz = Complex(1,0);
     Complex two = Complex(2,0);
     Complex temp = z;
 

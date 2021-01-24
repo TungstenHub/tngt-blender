@@ -39,7 +39,7 @@ params_dict = {
         'bailout': 2**8,
         'max_iter': 2**6,
         'color_factor': -0.08,
-        'color_offset': 0.32
+        'color_offset': 0.2
     }
 }
 params = params_dict[shader]
