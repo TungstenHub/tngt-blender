@@ -38,8 +38,8 @@ params_dict = {
     'smooth': {
         'bailout': 2**8,
         'max_iter': 2**6,
-        'color_factor': -0.1,
-        'color_offset': 0.4
+        'color_factor': -0.08,
+        'color_offset': 0.32
     }
 }
 params = params_dict[shader]
