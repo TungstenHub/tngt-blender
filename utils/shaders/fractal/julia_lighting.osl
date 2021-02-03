@@ -23,7 +23,7 @@ Complex div(Complex a, Complex b) {
     return mul(a,inv(b));
 }
 
-shader JuliaSmooth(
+shader JuliaLighting(
     vector Position = vector(0, 0, 0),
     float seed_x = 0,
     float seed_y = 0,

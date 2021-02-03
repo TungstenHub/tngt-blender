@@ -51,6 +51,13 @@ params_dict = {
         'color_factor': 1,
         'color_offset': 0,
         'ramp': 'bw'
+    },
+    'triangle_inequality_average': {
+        'bailout': 2**6,
+        'max_iter': 2**6,
+        'color_factor': 1,
+        'color_offset': 0.0,
+        'ramp': 'primary'
     }
 }
 params = params_dict[shader]
@@ -86,10 +93,8 @@ out_color = ramp_by_name(fac, params['ramp'])
 
 if withLight:
     l_params = params_dict['lighting']
-    inside2, out2 = osl_script('fractal/julia_' + 'lighting', location, seed_x, seed_y, bailout, max_iter)
-
+    inside2, out2 = osl_script('fractal/julia_' + 'lighting', location, seed_x, seed_y, value(2**6), value(2**6))
     fac2 = fract(multiply_by(out2,1.2))
-
     out_color2 = ramp_by_name(fac2, l_params['ramp'])
 
     mix = julia_mat.node_tree.nodes.new('ShaderNodeMixRGB')

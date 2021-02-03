@@ -42,7 +42,7 @@ shader JuliaNorm(
     }
 
     if (iter < max_iter) {
-        float nu = log(abs(z)) / log(bailout) - 1;
+        float nu = log2( log(abs(z)) / log(bailout) ) - 1;
         iter = iter - nu;
     }
         

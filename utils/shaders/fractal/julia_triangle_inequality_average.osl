@@ -1,0 +1,97 @@
+struct Complex {
+   float real;
+   float imag;
+};
+
+Complex sum(Complex a, Complex b) {
+    return Complex(a.real + b.real, a.imag + b.imag);
+}
+
+Complex mul(Complex a, Complex b) {
+    return Complex(a.real*b.real - a.imag*b.imag, a.real*b.imag + a.imag*b.real);
+}
+
+float abs(Complex a) {
+    return a.real*a.real + a.imag*a.imag;
+}
+
+Complex inv(Complex a) {
+    return Complex(a.real/abs(a), -a.imag/abs(a));
+}
+
+Complex div(Complex a, Complex b) {
+    return mul(a,inv(b));
+}
+
+shader JuliaTriangleInequalityAverage(
+    vector Position = vector(0, 0, 0),
+    float seed_x = 0,
+    float seed_y = 0,
+    float bailout = 4,
+    int max_iter = 64,
+    output float inside = 1,
+    output float fac = 1)
+{
+
+    float x = Position[0];
+    float y = Position[1];
+    Complex z = Complex(x,y);
+    Complex c = Complex(seed_x, seed_y);
+    // Complex c = Complex(1, 0);
+    float cc = sqrt(abs(c));
+    float cosc = c.real / cc;
+    float sinc = c.imag / cc;
+    float avg1 = 0.0;
+    float avg2 = 0.0;
+    float avg3 = 0.0;
+    float avg4 = 0.0;
+
+    inside = 1;
+    float iter = 0;
+
+    while (inside && iter < max_iter) {
+        if ( abs(z) > bailout ) { inside = 0; }
+        // poner exponential decay??
+        else {
+
+            avg1 = avg2;
+            avg2 = avg3;
+            avg3 = avg4;
+            avg4 = avg4 + cos(2*atan2(z.imag, z.real))/2 + 0.5;
+
+            z = sum(mul(z,z),c);
+            iter ++;
+
+        }
+
+    }
+
+    if (inside == 0) {
+        float alpha = atan2(z.imag, z.real);
+        float ac = atan2(c.imag, c.real);
+        for (int k = 0; k < 6; k++) {
+            alpha = 2*alpha;
+            avg1 = avg2;
+            avg2 = avg3;
+            avg3 = avg4;
+            avg4 = avg4 + cos(alpha)/2 + 0.5;
+            iter++;
+        }
+    }
+
+    avg1 = avg1 / (iter - 3);
+    avg2 = avg2 / (iter - 2);
+    avg3 = avg3 / (iter - 1);
+    avg4 = avg4 / (iter - 0);
+
+    float d = log2( log(abs(z))/log(bailout) );
+
+    float H0 = (   -   d*d +   d*d*d) / 2;
+    float H1 = ( d + 4*d*d - 3*d*d*d) / 2;
+    float H2 = ( 2 - 5*d*d + 3*d*d*d) / 2;
+    float H3 = (-d + 2*d*d -   d*d*d) / 2;
+
+    fac = avg4*H3 + avg3*H2 + avg2*H1 + avg1*H0;
+    // fac = avg4;
+    fac = fac * sqrt(fac);
+}
