@@ -1,21 +1,21 @@
 import bpy
 from math import pi
 
-bpy.ops.wm.addon_enable(module="add_mesh_extra_objects")
+bpy.ops.preferences.addon_enable(module="add_mesh_extra_objects")
 from mathutils import Color 
 
 # delete all previous objects and meshes
 
 def reset_blend():
 
-    for scene in bpy.data.scenes:
-        for obj in scene.objects:
-            scene.objects.unlink(obj)
+    for collection in bpy.data.collections:
+        for obj in collection.objects:
+            collection.objects.unlink(obj)
 
     for bpy_data_iter in (
             bpy.data.objects,
             bpy.data.meshes,
-            bpy.data.lamps,
+            bpy.data.lights,
             bpy.data.cameras,
             bpy.data.materials,
             bpy.data.textures,
@@ -27,42 +27,43 @@ def reset_blend():
 reset_blend()
 
 # cursor to center
-bpy.context.scene.cursor_location = (0.0, 0.0, 0.0)
+bpy.context.scene.cursor.location = (0.0, 0.0, 0.0)
     
 # add surface
-bpy.ops.mesh.primitive_xyz_function_surface(x_eq="cos(u)*sin(v)",
-                                            y_eq="sin(u)*sin(v)",
-                                            z_eq="cos(v)+log(tan(v/2)+0.01)+0.2*u", 
-                                            range_u_min=0, 
-                                            range_u_max=4*pi,
-                                            range_u_step=256, 
-                                            wrap_u = False,
-                                            range_v_min=0.1, 
-                                            range_v_max=2,
-                                            range_v_step=128, 
-                                            wrap_v = False)
+# bpy.ops.mesh.primitive_xyz_function_surface(x_eq="cos(u)*sin(v)",
+#                                             y_eq="sin(u)*sin(v)",
+#                                             z_eq="cos(v)+log(tan(v/2)+0.01)+0.2*u", 
+#                                             range_u_min=0, 
+#                                             range_u_max=4*pi,
+#                                             range_u_step=256, 
+#                                             wrap_u = False,
+#                                             range_v_min=0.1, 
+#                                             range_v_max=2,
+#                                             range_v_step=128, 
+#                                             wrap_v = False)
+bpy.ops.mesh.primitive_gem_add()
 bpy.context.object.name = 'surface'
 surface = bpy.data.objects['surface']
 
 # add material for surface
 bpy.ops.material.new()
 surf_mat = bpy.data.materials['Material']
-surf_mat.diffuse_color = Color([x/255 for x in (255,143,0)])
-surf_mat.diffuse_intensity = 1
+# surf_mat.diffuse_color = Color([x/255 for x in (255,143,0)])
+# surf_mat.diffuse_intensity = 1
 surf_mat.specular_intensity = 1
-surf_mat.specular_hardness = 30
-surf_mat.raytrace_mirror.use = True
-surf_mat.raytrace_mirror.reflect_factor = 0.3
-surface.data.materials.append(surf_mat)
+# surf_mat.specular_hardness = 30
+# surf_mat.raytrace_mirror.use = True
+# surf_mat.raytrace_mirror.reflect_factor = 0.3
+# surface.data.materials.append(surf_mat)
 
 # add lamps
 for i in [-10, 10]:
     for j in [-10, 10]:
         for k in [-10, 10]:
-            bpy.ops.object.lamp_add(type='POINT', location=(i,j,k))
+            bpy.ops.object.light_add(type='POINT', location=(i,j,k))
 
-for lamp in bpy.data.lamps:
-    lamp.energy = 2.0
+for light in bpy.data.lights:
+    light.energy = 2.0
 
 # add camera
 bpy.ops.object.camera_add(location=(15,0,0), rotation=(pi/2,0,pi/2))
@@ -84,13 +85,13 @@ empty.rotation_euler = (0,0,2*pi)
 empty.keyframe_insert(data_path='rotation_euler', frame=261)
 
 # add sky 
-def add_sky():
-    bpy.context.scene.world.use_sky_blend = True
-    bpy.context.scene.world.use_sky_real = True
-    bpy.context.scene.world.zenith_color = (0.00, 0.00, 0.00)
-    bpy.context.scene.world.horizon_color = (0.01, 0.01, 0.02)
+# def add_sky():
+#     # bpy.context.scene.world.use_sky_blend = True
+#     # bpy.context.scene.world.use_sky_real = True
+#     # bpy.context.scene.world.zenith_color = (0.00, 0.00, 0.00)
+#     # bpy.context.scene.world.horizon_color = (0.01, 0.01, 0.02)
 
-add_sky()
+# add_sky()
 
 # render image
 bpy.context.scene.camera = camera

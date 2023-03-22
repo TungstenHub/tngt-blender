@@ -1,6 +1,6 @@
 struct Complex {
-  float real;
-  float imag;
+   float real;
+   float imag;
 };
 
 Complex sum(Complex a, Complex b) {
@@ -15,23 +15,30 @@ float abs(Complex a) {
     return a.real*a.real + a.imag*a.imag;
 }
 
-shader Julia(
+shader MandSmooth(
     vector Position = vector(0, 0, 0),
     float seed_x = 0,
     float seed_y = 0,
-    output color c = color(0))
+    output float inside = 1,
+    output float dist = 1)
 {
 
     float x = Position[0];
     float y = Position[1];
+    Complex c = Complex(x,y);
     Complex z = Complex(x,y);
-    Complex s = Complex(seed_x, seed_y);
+    Complex dz = Complex(0,0);
+    Complex one = Complex(1,0);
+    Complex two = Complex(2,0);
+    Complex temp = z;
 
-    for (int i = 0; i < 64; i++) {
+    inside = 1;
+
+    for (int i = 0; i < 16; i++) {
         temp = sum(mul(z,z),c);
-        dz = mul(two,mul(z,dz));
+        dz = sum(mul(two,mul(z,dz)),one);
         z = temp;
-        if ( abs(z) > 16 ) { in = false; break; }
+        if ( abs(z) > 3200000000000000.0 ) { inside = 0; break; }
     }
 
     dist = abs(z) * log(abs(z)) / abs(dz);

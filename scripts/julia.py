@@ -21,7 +21,7 @@ bpy.ops.mesh.primitive_plane_add()
 plane = bpy.data.objects['Plane']
 plane.scale = (4, 4, 1)
 
-shader = 'smooth'
+shader = 'triangle_inequality_average'
 withLight = True
 params_dict = {
     'basic': {

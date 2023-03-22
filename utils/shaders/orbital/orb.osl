@@ -31,7 +31,7 @@ shader Orb(
     if ( l==2 && m==2 ){ Y = sqrt(15.0/8) * sin(t) * sin(t); }
 
     float E = -1/(2.0*n*n);
-    float a = m * atan2(y, x) - E * Time * 6.28;
+    float a = m * atan2(y, x) - E * Time * 6.28 * 3;
 
     re = R * Y * cos(a);
     im = R * Y * sin(a);

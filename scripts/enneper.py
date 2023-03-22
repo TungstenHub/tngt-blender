@@ -1,7 +1,7 @@
 import bpy
 from math import pi
 
-bpy.ops.wm.addon_enable(module="add_mesh_extra_objects")
+bpy.ops.preferences.addon_enable(module="add_mesh_extra_objects")
 from mathutils import Color 
 
 # delete all previous objects and meshes
